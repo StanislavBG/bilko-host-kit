@@ -24,6 +24,12 @@ export interface Theme {
 export { initTelemetry, log, logError, track, flush } from './telemetry.js';
 
 // ─────────────────────────────────────────────────────────────
+// Game services — leaderboards, save state, achievements.
+
+export { useLeaderboard, useSaveState, useUnlocks } from './games.js';
+export type { ScoreRow, LeaderboardOpts, AchievementDef, UnlockRow, SaveStateResult } from './games.js';
+
+// ─────────────────────────────────────────────────────────────
 // Color helpers (was: src/components/tool-page/colors.ts).
 
 function gradeColorLight(grade: string): string {
