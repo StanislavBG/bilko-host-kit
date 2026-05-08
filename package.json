@@ -1,6 +1,6 @@
 {
   "name": "@bilkobibitkov/host-kit",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Shared React component kit for bilko.run sibling apps — ToolHero, ScoreCard, SectionBreakdown, CompareLayout, Rewrites, CrossPromo, and analytics track().",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -11,9 +11,18 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.js",
+      "require": "./dist/testing/index.cjs"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -21,16 +30,28 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "@clerk/clerk-react": "^5.0.0"
+    "@clerk/clerk-react": "^5.0.0",
+    "@playwright/test": ">=1.40",
+    "react": "^18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@playwright/test": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/react": "^18.3.0",
     "tsup": "^8.0.0",
-    "typescript": "^5.6.0",
-    "@types/react": "^18.3.0"
+    "typescript": "^5.6.0"
   },
-  "publishConfig": { "access": "public" },
-  "repository": { "type": "git", "url": "https://github.com/StanislavBG/bilko-host-kit.git" },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/StanislavBG/bilko-host-kit.git"
+  },
   "license": "MIT",
   "author": "Stanislav Bibitkov"
 }

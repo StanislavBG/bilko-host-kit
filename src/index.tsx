@@ -18,65 +18,10 @@ export interface Theme {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Analytics — same wire format as the host's usePageView.track().
-// Calls bilko.run/api/analytics/event same-origin once deployed.
+// Telemetry — unified SDK (analytics + structured logs + error capture).
+// initTelemetry() wires batched sends; track() is always safe to call.
 
-const HOST = 'https://bilko.run';
-const API = `${HOST}/api`;
-
-let visitorId: string | null = null;
-function getVisitorId(): string {
-  if (visitorId) return visitorId;
-  try {
-    let v = localStorage.getItem('bilko_vid');
-    if (!v) {
-      v = crypto.randomUUID();
-      localStorage.setItem('bilko_vid', v);
-    }
-    visitorId = v;
-    return v;
-  } catch {
-    return 'anon';
-  }
-}
-
-let sessionId: string | null = null;
-function getSessionId(): string {
-  if (sessionId) return sessionId;
-  try {
-    sessionId = sessionStorage.getItem('bilko_sid') ?? crypto.randomUUID();
-    sessionStorage.setItem('bilko_sid', sessionId);
-    return sessionId;
-  } catch {
-    return 'anon';
-  }
-}
-
-export function track(event: string, props?: { tool?: string; metadata?: unknown }): void {
-  try {
-    const body = JSON.stringify({
-      event,
-      tool: props?.tool ?? 'unknown',
-      path: typeof window !== 'undefined' ? window.location.pathname : null,
-      metadata: props?.metadata ?? null,
-      visitor_id: getVisitorId(),
-      session_id: getSessionId(),
-    });
-    const url = `${API}/analytics/event`;
-    if (typeof navigator?.sendBeacon === 'function') {
-      const blob = new Blob([body], { type: 'application/json' });
-      if (navigator.sendBeacon(url, blob)) return;
-    }
-    fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body,
-      keepalive: true,
-    }).catch(() => {});
-  } catch {
-    // analytics never breaks the app
-  }
-}
+export { initTelemetry, log, logError, track, flush } from './telemetry.js';
 
 // ─────────────────────────────────────────────────────────────
 // Color helpers (was: src/components/tool-page/colors.ts).
@@ -142,7 +87,8 @@ export function ToolHero({ title, tagline, theme, children }: {
               clipRule="evenodd"
             />
           </svg>
-          Free to try &middot; Results in ~30 seconds &middot; No credit card
+          Free to try &middot; Results in ~30 seconds &middot;{' '}
+          <a href="https://bilko.run" className="hover:text-warm-300 transition-colors">bilko.run</a>
         </p>
       </div>
     </section>
@@ -163,7 +109,7 @@ export function ScoreCard({ score, grade, verdict, toolName, theme }: {
   const shareText = `Just scored ${score}/100 (${grade}) on ${toolName}\n\n"${verdict}"\n\nFree at bilko.run`;
 
   return (
-    <div className={`bg-gradient-to-br ${theme.heroGradient} rounded-2xl p-6 md:p-8 text-center relative overflow-hidden animate-slide-up shadow-dark-elevation`}>
+    <div data-testid="score-card" className={`bg-gradient-to-br ${theme.heroGradient} rounded-2xl p-6 md:p-8 text-center relative overflow-hidden animate-slide-up shadow-dark-elevation`}>
       <div
         className="absolute inset-0"
         style={{ background: `radial-gradient(circle at 50% 30%, ${theme.glowColor}, transparent 60%)` }}
@@ -177,6 +123,7 @@ export function ScoreCard({ score, grade, verdict, toolName, theme }: {
           </span>
           <div className="text-left">
             <div
+              data-testid="score-card-grade"
               className={`text-4xl md:text-5xl font-black ${gradeColorLight(grade)}`}
               style={{ letterSpacing: '-0.03em' }}
             >
