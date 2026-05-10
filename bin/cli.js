@@ -33,7 +33,11 @@ const files = walk('dist').filter(f => f !== values.out);
 const totalGz = files.reduce((acc, f) => acc + gzipSync(readFileSync(f)).length, 0);
 const sha = run('git rev-parse --short HEAD');
 const branch = run('git rev-parse --abbrev-ref HEAD');
-const kit = (pkg.dependencies?.['@bilkobibitkov/host-kit'] ?? '0.0.0').replace(/^[\^~]/, '');
+let kit = (pkg.dependencies?.['@bilkobibitkov/host-kit'] ?? '0.0.0').replace(/^[\^~]/, '');
+if (!kit.match(/^\d/)) {
+  try { kit = JSON.parse(readFileSync('node_modules/@bilkobibitkov/host-kit/package.json', 'utf8')).version ?? '0.0.0'; }
+  catch { kit = '0.0.0'; }
+}
 
 writeFileSync(
   values.out,

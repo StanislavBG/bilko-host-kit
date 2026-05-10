@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2
+
+- **`bilko-host-kit emit-manifest`** — fall back to reading the actually-installed `@bilkobibitkov/host-kit` version from `node_modules/` when a consumer's `package.json` declares the dep as `workspace:*` (or any non-numeric range). Previously emitted `0.0.0` for workspace consumers.
+
 ## 0.7.1
 
 - **`useUnlocks`** — expose `lastCrossUnlock` so consumers can react to cross-game unlocks.
