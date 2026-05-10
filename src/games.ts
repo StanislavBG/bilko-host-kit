@@ -30,6 +30,12 @@ export interface UnlockRow {
   unlocked_at: number;
 }
 
+export interface CrossUnlock {
+  game: string;
+  key: string;
+  name: string;
+}
+
 export interface SaveStateResult<T> {
   blob: T | null;
   version: number;
@@ -139,9 +145,11 @@ export function useUnlocks(game: string): {
   unlocks: UnlockRow[];
   achievements: AchievementDef[];
   unlock(key: string): Promise<boolean>;
+  lastCrossUnlock: CrossUnlock | null;
 } {
   const [unlocks, setUnlocks] = useState<UnlockRow[]>([]);
   const [achievements, setAchievements] = useState<AchievementDef[]>([]);
+  const [lastCrossUnlock, setLastCrossUnlock] = useState<CrossUnlock | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -164,14 +172,15 @@ export function useUnlocks(game: string): {
       body: JSON.stringify({ key }),
     });
     if (r.ok) {
-      const j = await r.json() as { unlocked_at: number };
+      const j = await r.json() as { unlocked_at: number; crossUnlock?: CrossUnlock };
       setUnlocks((prev) =>
         prev.some((u) => u.key === key) ? prev : [...prev, { key, unlocked_at: j.unlocked_at }],
       );
+      if (j.crossUnlock) setLastCrossUnlock(j.crossUnlock);
       return true;
     }
     return false;
   }, [game]);
 
-  return { unlocks, achievements, unlock };
+  return { unlocks, achievements, unlock, lastCrossUnlock };
 }
