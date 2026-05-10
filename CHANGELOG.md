@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+- **`useUnlocks`** — expose `lastCrossUnlock` so consumers can react to cross-game unlocks.
+
 ## 0.7.0
 
 - **`<GameShell>`** — layout container (eyebrow, title, tagline, theme, footerLinks) replacing per-game App shells.
@@ -14,6 +18,16 @@
 ## 0.6.0
 
 - `useLeaderboard`, `useSaveState`, `useUnlocks` — game services hooks.
+
+## 0.5.0
+
+- **`CrossPromo`** — contextual "Next up" panel linking to related bilko.run tools. Consumer-supplied item list; no bilko.run dependency at runtime.
+- **Color utilities** — exported `gradeColor`, `gradeColorLight`, `barColor` helpers for consistent grade/bar coloring across tools.
+
+## 0.4.0
+
+- **`CompareLayout`** — A/B comparison layout with winner banner, side-by-side score cards, verdict, and optional strategic analysis block.
+- **`Rewrites`** — AI rewrite suggestion list with copy buttons, predicted score badges, technique labels, and `why_better` callouts.
 
 ## 0.3.0
 
