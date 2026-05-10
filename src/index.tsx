@@ -30,6 +30,12 @@ export { useLeaderboard, useSaveState, useUnlocks } from './games.js';
 export type { ScoreRow, LeaderboardOpts, AchievementDef, UnlockRow, SaveStateResult } from './games.js';
 
 // ─────────────────────────────────────────────────────────────
+// Game shell — layout, typed bus, timer, tokens (v0.7.0).
+
+export { GameShell, GameTheme, useGameTheme, createBus, useGameTimer, useVisibilityPause } from './games/index.js';
+export type { GameShellProps, GameThemeColors } from './games/index.js';
+
+// ─────────────────────────────────────────────────────────────
 // Color helpers (was: src/components/tool-page/colors.ts).
 
 function gradeColorLight(grade: string): string {
