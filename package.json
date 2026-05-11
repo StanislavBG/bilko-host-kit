@@ -1,5 +1,5 @@
 {
-  "name": "@bilkobibitkov/host-kit",
+  "name": "host-kit",
   "version": "0.7.2",
   "description": "Shared React component kit for bilko.run sibling apps — ToolHero, ScoreCard, GameShell, typed bus, game tokens, manifest CLI.",
   "type": "module",
@@ -67,7 +67,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true
+    "provenance": false
   },
   "engines": {
     "node": ">=18.0.0"
