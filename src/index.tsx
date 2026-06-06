@@ -36,6 +36,12 @@ export { GameShell, GameTheme, useGameTheme, createBus, useGameTimer, useVisibil
 export type { GameShellProps, GameThemeColors } from './games/index.js';
 
 // ─────────────────────────────────────────────────────────────
+// Site header — the shared Bilko top bar for static-path siblings.
+
+export { SiteHeader, DEFAULT_SECTIONS } from './SiteHeader.js';
+export type { SiteHeaderProps, SiteSection } from './SiteHeader.js';
+
+// ─────────────────────────────────────────────────────────────
 // Color helpers (was: src/components/tool-page/colors.ts).
 
 function gradeColorLight(grade: string): string {
@@ -100,7 +106,8 @@ export function ToolHero({ title, tagline, theme, children }: {
             />
           </svg>
           Free to try &middot; Results in ~30 seconds &middot;{' '}
-          <a href="https://bilko.run" className="hover:text-warm-300 transition-colors">bilko.run</a>
+          {/* a11y link-in-text-block: inline link needs a non-color affordance (underline). */}
+          <a href="https://bilko.run" className="underline underline-offset-2 hover:text-warm-300 transition-colors">bilko.run</a>
         </p>
       </div>
     </section>
@@ -209,7 +216,9 @@ export function SectionBreakdown({ pillars, labels }: {
       className="bg-white rounded-2xl shadow-elevation-1 p-6 animate-slide-up"
       style={{ animationDelay: '100ms' }}
     >
-      <h3 className="text-label text-warm-400 mb-6">Score Breakdown</h3>
+      {/* a11y: muted label/feedback text on white cards must hit WCAG AA (>=4.5:1).
+          warm-400 (2.03:1) and warm-500 (2.93:1) on white FAIL; bumped to warm-700 (6.60:1). */}
+      <h3 className="text-label text-warm-700 mb-6">Score Breakdown</h3>
       <div className="space-y-6">
         {Object.entries(pillars).map(([key, pillar]) => {
           const pct = Math.round((pillar.score / pillar.max) * 100);
@@ -227,7 +236,7 @@ export function SectionBreakdown({ pillars, labels }: {
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <p className="text-sm text-warm-500 leading-relaxed">{pillar.feedback}</p>
+              <p className="text-sm text-warm-700 leading-relaxed">{pillar.feedback}</p>
             </div>
           );
         })}
@@ -255,16 +264,18 @@ function CompareCard({ label, score, grade, verdict, pillars, pillarLabels, isWi
     <div className={`relative bg-white rounded-2xl p-5 transition-all ${
       isWinner ? 'shadow-elevation-2 ring-2 ring-green-200' : isDimmed ? 'shadow-elevation-1 opacity-55' : 'shadow-elevation-1'
     }`}>
+      {/* a11y: white on green-500 = 2.28:1 (fail); green-700 = 5.02:1 (pass) for 10px text. */}
       {isWinner && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full">Winner</div>
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-700 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full">Winner</div>
       )}
       <div className="text-center mb-4">
-        <div className="text-label text-warm-400 mb-2">{label}</div>
+        {/* a11y: warm-400/500/600 on white all fail AA; bumped to warm-700 (6.60:1). */}
+        <div className="text-label text-warm-700 mb-2">{label}</div>
         <div className="flex items-center justify-center gap-3">
           <span className="text-4xl font-black text-warm-900" style={{ letterSpacing: '-0.03em' }}>{score}</span>
           <span className={`text-2xl font-black ${gradeColor(grade)}`}>{grade}</span>
         </div>
-        <p className="text-sm text-warm-600 italic mt-2 line-clamp-2">&ldquo;{verdict}&rdquo;</p>
+        <p className="text-sm text-warm-700 italic mt-2 line-clamp-2">&ldquo;{verdict}&rdquo;</p>
       </div>
       <div className="space-y-2 border-t border-warm-100/80 pt-3">
         {Object.entries(pillars).map(([key, s]) => {
@@ -272,8 +283,8 @@ function CompareCard({ label, score, grade, verdict, pillars, pillarLabels, isWi
           return (
             <div key={key}>
               <div className="flex justify-between text-xs mb-0.5">
-                <span className="text-warm-500">{pillarLabels[key] ?? key}</span>
-                <span className="font-bold text-warm-600 tabular-nums">{s.score}/{s.max}</span>
+                <span className="text-warm-700">{pillarLabels[key] ?? key}</span>
+                <span className="font-bold text-warm-700 tabular-nums">{s.score}/{s.max}</span>
               </div>
               <div className="h-1.5 bg-warm-100 rounded-full overflow-hidden">
                 <div className={`h-full rounded-full ${barColor(pct)}`} style={{ width: `${pct}%` }} />
@@ -301,7 +312,8 @@ export function CompareLayout({ winner, margin, verdict, analysis, cardA, cardB,
       {winner !== 'tie' ? (
         <div className="bg-green-50 rounded-2xl p-6 text-center animate-slide-up shadow-elevation-1">
           <p className="text-display-sm text-green-700">{cardA.label.includes(winner) ? cardA.label : cardB.label} wins</p>
-          <p className="text-sm text-green-600 mt-1 tabular-nums">+{margin} points ahead</p>
+          {/* a11y: green-600 on green-50 = 3.15:1 (fail); green-700 = 4.79:1 (pass). */}
+          <p className="text-sm text-green-700 mt-1 tabular-nums">+{margin} points ahead</p>
         </div>
       ) : (
         <div className="bg-amber-50 rounded-2xl p-6 text-center animate-slide-up shadow-elevation-1">
@@ -317,14 +329,16 @@ export function CompareLayout({ winner, margin, verdict, analysis, cardA, cardB,
 
       {/* Verdict */}
       <div className="bg-white rounded-2xl shadow-elevation-1 p-6 animate-slide-up" style={{ animationDelay: '200ms' }}>
-        <h3 className="text-label text-warm-400 mb-3">Verdict</h3>
+        {/* a11y: section-label warm-400 (2.03:1) -> warm-700 (6.60:1) on white. */}
+        <h3 className="text-label text-warm-700 mb-3">Verdict</h3>
         <p className="text-sm text-warm-700 leading-relaxed">{verdict}</p>
       </div>
 
       {/* Analysis */}
       {analysis && (
         <div className="bg-gradient-to-r from-fire-50/80 to-warm-50 rounded-2xl shadow-elevation-1 p-6 animate-slide-up" style={{ animationDelay: '300ms' }}>
-          <h3 className="text-label text-fire-500 mb-3">Strategic Analysis</h3>
+          {/* a11y: fire-500 on fire-50 = ~2.8:1 (fail); fire-700 = 5.0:1 (pass). */}
+          <h3 className="text-label text-fire-700 mb-3">Strategic Analysis</h3>
           <p className="text-sm text-warm-700 leading-relaxed">{analysis}</p>
         </div>
       )}
@@ -351,7 +365,9 @@ export function Rewrites({ rewrites, noun = 'rewrite' }: { rewrites: Rewrite[]; 
 
   return (
     <div className="bg-white rounded-2xl shadow-elevation-1 p-6 animate-slide-up" style={{ animationDelay: '200ms' }}>
-      <h3 className="text-label text-warm-400 mb-4">
+      {/* a11y: all muted warm-400/500 + fire-500 labels on white fail AA; bumped to
+          warm-700 (6.60:1) / fire-700 (5.03:1). green-600 badge on green-50 -> green-700. */}
+      <h3 className="text-label text-warm-700 mb-4">
         AI {noun}s ({rewrites.length})
       </h3>
       <div className="space-y-3">
@@ -360,21 +376,21 @@ export function Rewrites({ rewrites, noun = 'rewrite' }: { rewrites: Rewrite[]; 
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 {(rw.label || rw.optimized_for) && (
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-fire-500 mb-1 block">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-fire-700 mb-1 block">
                     {rw.label || rw.optimized_for?.replace(/_/g, ' ')}
                   </span>
                 )}
                 <p className="text-sm text-warm-800 font-medium leading-relaxed">{rw.text}</p>
                 {rw.why_better && (
-                  <p className="text-xs text-warm-500 mt-1.5 italic">{rw.why_better}</p>
+                  <p className="text-xs text-warm-700 mt-1.5 italic">{rw.why_better}</p>
                 )}
                 {rw.technique && (
-                  <p className="text-xs text-warm-400 mt-1">{rw.technique}</p>
+                  <p className="text-xs text-warm-700 mt-1">{rw.technique}</p>
                 )}
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 {rw.predicted_score !== undefined && (
-                  <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md tabular-nums">
+                  <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-md tabular-nums">
                     ~{rw.predicted_score}
                   </span>
                 )}
@@ -384,7 +400,7 @@ export function Rewrites({ rewrites, noun = 'rewrite' }: { rewrites: Rewrite[]; 
                     setCopiedIdx(i);
                     setTimeout(() => setCopiedIdx(null), 1500);
                   }}
-                  className="text-xs font-medium text-warm-400 hover:text-warm-700 transition-colors"
+                  className="text-xs font-medium text-warm-700 hover:text-warm-900 transition-colors"
                 >
                   {copiedIdx === i ? 'Copied!' : 'Copy'}
                 </button>
@@ -413,7 +429,8 @@ export function CrossPromo({ items }: { items: CrossPromoItem[] }) {
   return (
     <div className="max-w-2xl mx-auto px-6 pb-12">
       <div className="bg-warm-50/80 rounded-2xl shadow-elevation-1 p-6">
-        <h3 className="text-label text-warm-400 mb-4">Next up</h3>
+        {/* a11y: warm-400 (1.99:1) / warm-500 (2.88:1) on warm-50 fail AA -> warm-700 (6.49:1). */}
+        <h3 className="text-label text-warm-700 mb-4">Next up</h3>
         <div className="space-y-3">
           {items.map(p => (
             <a
@@ -425,10 +442,10 @@ export function CrossPromo({ items }: { items: CrossPromoItem[] }) {
                 <span className="text-sm font-bold text-warm-800 group-hover:text-warm-900 transition-colors">
                   {p.name}
                 </span>
-                <p className="text-xs text-warm-500 mt-0.5">{p.hook}</p>
+                <p className="text-xs text-warm-700 mt-0.5">{p.hook}</p>
               </div>
               <svg
-                className="w-4 h-4 text-warm-400 group-hover:text-fire-500 group-hover:translate-x-0.5 transition-all flex-shrink-0"
+                className="w-4 h-4 text-warm-600 group-hover:text-fire-700 group-hover:translate-x-0.5 transition-all flex-shrink-0"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
